@@ -1,0 +1,25 @@
+[general]
+name=PointsRegrouping
+author=Maks Skorokhod
+email=samael500@gmail.com
+
+qgisMinimumVersion=1.0
+; qgisMaximumVersion=2.0
+
+description=Copies point within the polygon predetermined number of times.
+about=Copies point within the polygon predetermined number of times.
+tags=maptool,feature,point,polygon,layers
+category=Vector
+
+version=0.1
+changelog=The changelog lists the plugin versions:
+    0.1 - First testing release
+
+homepage=https://github.com/Samael500/qgis-points
+tracker=https://github.com/Samael500/qgis-points/issues
+repository=https://github.com/Samael500/qgis-points
+
+icon=icon.png
+
+experimental=True
+deprecated=False
