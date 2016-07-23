@@ -1,25 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
 [general]
-name=PointsRegrouping
-author=Maks Skorokhod
+name=PointsRegroupingPlugin
+qgisMinimumVersion=2.0
+description=Copies point within the polygon predetermined number of times.
+version=0.1
+author=Maks Skorokhod / WB-Tech
 email=samael500@gmail.com
 
-qgisMinimumVersion=1.0
-; qgisMaximumVersion=2.0
-
-description=Copies point within the polygon predetermined number of times.
 about=Copies point within the polygon predetermined number of times.
-tags=maptool,feature,point,polygon,layers
-category=Vector
 
-version=0.1
-changelog=The changelog lists the plugin versions:
-    0.1 - First testing release
-
-homepage=https://github.com/Samael500/qgis-points
 tracker=https://github.com/Samael500/qgis-points/issues
 repository=https://github.com/Samael500/qgis-points
+# End of mandatory metadata
 
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=maptool,feature,point,polygon,layers
+
+homepage=https://github.com/Samael500/qgis-points
+category=Plugins
 icon=icon.png
-
+# experimental flag
 experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
+
