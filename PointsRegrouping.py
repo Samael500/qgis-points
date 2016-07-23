@@ -68,6 +68,10 @@ class PointsRegrouping:
 
         self.toolbar = self.iface.addToolBar(self._name)
         self.toolbar.setObjectName(self._name)
+        # clear selections
+        layers = self.iface.mapCanvas().layers()
+        for layer in layers:
+            layer.removeSelection()
 
     def createToolButton(self, parent, text):
         button = QToolButton(parent)
@@ -98,17 +102,16 @@ class PointsRegrouping:
         return action
 
     def initGui(self):
-        # # Create action that will start plugin configuration
-        # self.actionCriar = self.createAction(
-        #     ":/plugins/PointsRegrouping/icon.png",
-        #     u"Multi Selection by point",
-        #     self.run)
-
         # Create action that will start plugin configuration
-        self.actionRectangle = self.createAction(
+        self.actionRandom = self.createAction(
             ":/plugins/PointsRegrouping/icon.png",
-            u"Select by Rectangle",
-            self.run)
+            u"Generate Random",
+            self.run_random)
+
+        self.actionLinear = self.createAction(
+            ":/plugins/PointsRegrouping/icon.png",
+            u"Generate Linear",
+            self.run_linear)
 
         # Create action that will start plugin configuration
         self.actionClear = self.createClearAction(
@@ -116,40 +119,42 @@ class PointsRegrouping:
             u"Clear selections")
 
         # self.tool = MultiLayerSelection(self.iface.mapCanvas(), self.actionCriar)
-        self.toolRectangle = PointsRegroupingProcessor(self.iface.mapCanvas(), self.actionRectangle)
+        self.toolRandom = PointsRegroupingProcessor(self.iface.mapCanvas(), self.actionRandom, 'random')
+        self.toolLinear = PointsRegroupingProcessor(self.iface.mapCanvas(), self.actionLinear, 'linear')
+
 
         #QToolButtons
         self.selectionButton = self.createToolButton(self.toolbar, u'PointsRegroupingButton')
-        # self.selectionButton.addAction(self.actionCriar)
-        self.selectionButton.addAction(self.actionRectangle)
+        self.selectionButton.addAction(self.actionLinear)
+        self.selectionButton.addAction(self.actionRandom)
         self.selectionButton.addAction(self.actionClear)
         # set default active
-        self.selectionButton.setDefaultAction(self.actionRectangle)
+        self.selectionButton.setDefaultAction(self.actionLinear)
 
     def unload(self):
         # Remove the plugin menu item and icon
         self.iface.mainWindow().removeToolBar(self.toolbar)
 
     def clear(self):
-        # self.actionCriar.setChecked(False)
-        self.actionRectangle.setChecked(False)
+        self.actionLinear.setChecked(False)
+        self.actionRandom.setChecked(False)
         self.selectionButton.setDefaultAction(self.selectionButton.sender())
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
             layer.removeSelection()
 
-    # def run(self, b):
-    #     self.actionCriarRectangle.setChecked(False)
-    #     self.selectionButton.setDefaultAction(self.selectionButton.sender())
-    #     if b:
-    #         self.iface.mapCanvas().setMapTool(self.tool)
-    #     else:
-    #         self.iface.mapCanvas().unsetMapTool(self.tool)
-
-    def run(self, b):
-        # self.actionCriar.setChecked(False)
+    def run_random(self, b):
+        self.actionLinear.setChecked(False)
         self.selectionButton.setDefaultAction(self.selectionButton.sender())
         if b:
-            self.iface.mapCanvas().setMapTool(self.toolRectangle)
+            self.iface.mapCanvas().setMapTool(self.toolRandom)
         else:
-            self.iface.mapCanvas().unsetMapTool(self.toolRectangle)
+            self.iface.mapCanvas().unsetMapTool(self.toolRandom)
+
+    def run_linear(self, b):
+        self.actionRandom.setChecked(False)
+        self.selectionButton.setDefaultAction(self.selectionButton.sender())
+        if b:
+            self.iface.mapCanvas().setMapTool(self.toolLinear)
+        else:
+            self.iface.mapCanvas().unsetMapTool(self.toolLinear)
