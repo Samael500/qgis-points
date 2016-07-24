@@ -70,19 +70,15 @@ class PointsRegroupingProcessor(QgsMapTool):
         def xy(x0, y0, step, k=k):
             return x0 + math.cos(k) * step, y0 + math.sin(k) * step
 
-        # ПЕРЕСЕЧЕНИЕ ДВУХ ПРЯМЫХ И СВДИГ
-        # ОДНА ПРЯМАЯ ЗАДАНА ЧЕРЕЗ k
-        # ДРУГАЯ ЧЕРЕЗ - 1/ k
+        def _xy(a, b, k):
+            if not k:
+                x = a.x()
+            else:
+                x = (1. / k * b.x() + b.y() + k * a.x() - a.y()) * k / (k ** 2 + 1)
+            y = k * (x - a.x()) + a.y() 
+            return x, y
 
-        x0, y0 = xy(A.x(), A.y(), stepx)
-
-        a = xy(x0, y0, stepx, -1 / k)
-        b = xy(x0, y0, -stepx, -1 / k)
-
-        if self.qgisdist(QgsPoint(*a), QgsPoint(cx, cy)) > self.qgisdist(QgsPoint(*b), QgsPoint(cx, cy)):
-            x0, y0 = b
-        else:
-            x0, y0 = a
+        x0, y0 = _xy(QgsPoint(cx, cy), QgsPoint(*xy(A.x(), A.y(), stepx)))
 
         features = []
         for i in xrange(count):
