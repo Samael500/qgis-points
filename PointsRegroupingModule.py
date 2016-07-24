@@ -47,10 +47,10 @@ class PointsRegroupingProcessor(QgsMapTool):
         A = B = None
         cx = cy = 0
         for indx, pnt in enumerate(polygon[1:], start=1):
-            _dist = self.qgisdist(pnt, polygon[indx-1])
+            _dist = self.qgisdist(pnt, polygon[indx - 1])
             if _dist > dist:
                 dist = _dist
-                A, B = pnt, polygon[indx-1]
+                A, B = pnt, polygon[indx - 1]
             cx += pnt[0]
             cy += pnt[1]
 
@@ -61,6 +61,7 @@ class PointsRegroupingProcessor(QgsMapTool):
         stepx = step / 2.
 
         A, B = (QgsPoint(item) for item in sorted([A, B], key=lambda item: item[0]))
+
         def K(a, b):
             return math.atan((b.y() - a.y()) / (b.x() - a.x())) if b.x() != a.x() else 0
 
@@ -75,7 +76,7 @@ class PointsRegroupingProcessor(QgsMapTool):
                 x = a.x()
             else:
                 x = (1. / k * b.x() + b.y() + k * a.x() - a.y()) * k / (k ** 2 + 1)
-            y = k * (x - a.x()) + a.y() 
+            y = k * (x - a.x()) + a.y()
             return x, y
 
         x0, y0 = _xy(QgsPoint(cx, cy), QgsPoint(*xy(A.x(), A.y(), stepx)))
@@ -98,7 +99,7 @@ class PointsRegroupingProcessor(QgsMapTool):
         points = []
         while len(points) < count:
             random_point = QgsPoint(
-                minx + (random() * (maxx-minx)), miny + (random() * (maxy-miny)))
+                minx + (random() * (maxx - minx)), miny + (random() * (maxy - miny)))
             if not polygon.contains(random_point):
                 continue
             points.append(QgsGeometry.fromPoint(random_point))
@@ -222,7 +223,6 @@ class PointsRegroupingProcessor(QgsMapTool):
     def deactivate(self):
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
-
 
     def activate(self):
         QgsMapTool.activate(self)

@@ -122,8 +122,7 @@ class PointsRegrouping:
         self.toolRandom = PointsRegroupingProcessor(self.iface.mapCanvas(), self.actionRandom, 'random')
         self.toolLinear = PointsRegroupingProcessor(self.iface.mapCanvas(), self.actionLinear, 'linear')
 
-
-        #QToolButtons
+        # QToolButtons
         self.selectionButton = self.createToolButton(self.toolbar, u'PointsRegroupingButton')
         self.selectionButton.addAction(self.actionLinear)
         self.selectionButton.addAction(self.actionRandom)
