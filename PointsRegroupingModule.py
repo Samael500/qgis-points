@@ -40,7 +40,7 @@ class PointsRegroupingProcessor(QgsMapTool):
         try:
             count = int(point.attributes()[13])
         except UnicodeEncodeError, ValueError:
-            self.warning('No valid access parameter, must be digit. Given `{}`'.format(point.attributes()[13]))
+            self.warning('No valid access parameter, must be digit.')
             return
 
         polygon = polygon_feature.geometry()
