@@ -37,11 +37,29 @@ class PointsRegroupingProcessor(QgsMapTool):
 
     def generate_points(self, point, polygon_feature):
         # WARNING IS POTENTIAL BUG PLACE
+        processed_flag = '/processed'
         try:
-            count = int(point.attributes()[13])
-        except UnicodeEncodeError, ValueError:
-            self.warning('No valid access parameter, must be digit.')
+            count = point['access']
+            processed = processed_flag in count
+            count = int(count.split(processed_flag)[0])
+        except (UnicodeEncodeError, ValueError):
+            count = None
+
+        if not count:
+            self.warning('No valid access parameter, must be digit > 0.')
             return
+
+        if not processed:
+            point['access'] += processed_flag
+            for key in 'room', 'L_room', 'all_area', 'NL_area', 'CP_area', 'parcel_are':
+                try:
+                    if key in ('room', ):
+                        _type = int
+                    else:
+                        _type = float
+                    point[key] = str(_type(float(point[key]) / count))
+                except (TypeError, ValueError):
+                    pass
 
         polygon = polygon_feature.geometry()
         return {'random': self.random_points, 'linear': self.linear_points}[self.kind](point, polygon, count)
