@@ -31,9 +31,8 @@ tags=maptool,feature,point,polygon,layers
 homepage=https://github.com/Samael500/qgis-points
 category=Plugins
 icon=icon.png
-# experimental flag
-experimental=True
 
+# experimental flag
+experimental=False
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
