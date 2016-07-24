@@ -199,7 +199,7 @@ class PointsRegroupingProcessor(QgsMapTool):
 
         self.rubberBand.hide()
 
-        # QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         self.do_points()
         QApplication.restoreOverrideCursor()
 
