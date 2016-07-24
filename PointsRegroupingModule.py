@@ -29,12 +29,20 @@ class PointsRegroupingProcessor(QgsMapTool):
         self.kind = kind
         self.reset()
 
-    def pprint(self, msg):
+    def info(self, msg):
         QMessageBox.information(None, "DEBUG:", str(msg))
+
+    def warning(self, msg):
+        QMessageBox.warning(None, self._name, str(msg))
 
     def generate_points(self, point, polygon_feature):
         # WARNING IS POTENTIAL BUG PLACE
-        count = int(point.attributes()[13])
+        try:
+            count = int(point.attributes()[13])
+        except UnicodeEncodeError, ValueError:
+            self.warning('No valid access parameter, must be digit. Given `{}`'.format(point.attributes()[13]))
+            return
+
         polygon = polygon_feature.geometry()
         return {'random': self.random_points, 'linear': self.linear_points}[self.kind](point, polygon, count)
 
@@ -63,23 +71,24 @@ class PointsRegroupingProcessor(QgsMapTool):
         A, B = (QgsPoint(item) for item in sorted([A, B], key=lambda item: item[0]))
 
         def K(a, b):
-            return math.atan((b.y() - a.y()) / (b.x() - a.x())) if b.x() != a.x() else 0
+            k = (b.y() - a.y()) / (b.x() - a.x()) if b.x() != a.x() else 0
+            return math.atan(k), k
 
-        k = K(A, B)
-        self.pprint(k)
+        k, _k = K(A, B)
 
         def xy(x0, y0, step, k=k):
             return x0 + math.cos(k) * step, y0 + math.sin(k) * step
 
-        def _xy(a, b, k):
+        def _xy(ax, ay, cx, cy, k=_k):
             if not k:
-                x = a.x()
+                x = cx
             else:
-                x = (1. / k * b.x() + b.y() + k * a.x() - a.y()) * k / (k ** 2 + 1)
-            y = k * (x - a.x()) + a.y()
+                x = (ax / k + ay + k * cx - cy) / (k + 1 / k)
+            y = k * (x - cx) + cy
             return x, y
 
-        x0, y0 = _xy(QgsPoint(cx, cy), QgsPoint(*xy(A.x(), A.y(), stepx)))
+        x0, y0 = xy(A.x(), A.y(), stepx)
+        x0, y0 = _xy(x0, y0, cx, cy)
 
         features = []
         for i in xrange(count):
@@ -88,8 +97,6 @@ class PointsRegroupingProcessor(QgsMapTool):
             feature.setGeometry(QgsGeometry.fromPoint(QgsPoint(x0, y0)))
             features.append(feature)
             x0, y0 = xy(x0, y0, step)
-            self.pprint([x0, y0])
-
         return features
 
     def random_points(self, point, polygon, count):
@@ -113,7 +120,6 @@ class PointsRegroupingProcessor(QgsMapTool):
         return features
 
     def remove_points(self, layer, polygon_feature):
-        return #WARNING
         index = QgsSpatialIndex()
         for feature in layer.getFeatures():
             index.insertFeature(feature)
@@ -127,6 +133,8 @@ class PointsRegroupingProcessor(QgsMapTool):
         for feature in layer.getFeatures(request):
             if polygon.contains(feature.geometry().asPoint()):
                 yield feature.id()
+        for feature in layer.selectedFeatures():
+            yield feature.id()
 
     def do_points(self):
         point_layer = polygon = None
@@ -155,12 +163,12 @@ class PointsRegroupingProcessor(QgsMapTool):
         provider = point_layer.dataProvider()
         point_layer.startEditing()
 
-        map(point_layer.deleteFeature, self.remove_points(point_layer, polygon_feature))
-
-        provider.addFeatures(self.generate_points(point_feature, polygon_feature))
-
-        point_layer.commitChanges()
-        point_layer.updateExtents()
+        points = self.generate_points(point_feature, polygon_feature)
+        if points is not None:
+            map(point_layer.deleteFeature, self.remove_points(point_layer, polygon_feature))
+            provider.addFeatures(points)
+            point_layer.commitChanges()
+            point_layer.updateExtents()
 
     def reset(self):
         self.startPoint = self.endPoint = None
