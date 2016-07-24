@@ -104,18 +104,18 @@ class PointsRegrouping:
     def initGui(self):
         # Create action that will start plugin configuration
         self.actionRandom = self.createAction(
-            ":/plugins/PointsRegrouping/icon.png",
+            ":/plugins/PointsRegrouping/icons/mixer.png",
             u"Generate Random",
             self.run_random)
 
         self.actionLinear = self.createAction(
-            ":/plugins/PointsRegrouping/icon.png",
+            ":/plugins/PointsRegrouping/icons/ruler.png",
             u"Generate Linear",
             self.run_linear)
 
         # Create action that will start plugin configuration
         self.actionClear = self.createClearAction(
-            ":/plugins/PointsRegrouping/icon.png",
+            ":/plugins/PointsRegrouping/icons/eraser.png",
             u"Clear selections")
 
         # self.tool = MultiLayerSelection(self.iface.mapCanvas(), self.actionCriar)

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/plugins/PointsRegrouping" >
-        <file>icon.png</file>
+        <file>icons/icon.png</file>
+        <file>icons/ruler.png</file>
+        <file>icons/mixer.png</file>
+        <file>icons/eraser.png</file>
     </qresource>
 </RCC>
