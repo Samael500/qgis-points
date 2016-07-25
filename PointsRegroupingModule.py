@@ -121,19 +121,22 @@ class PointsRegroupingProcessor(QgsMapTool):
         rect = polygon.boundingBox()
         maxx, maxy, minx, miny = [getattr(rect, key)() for key in ('xMaximum', 'yMaximum', 'xMinimum', 'yMinimum')]
 
+        dis = polygon.length() / (3. * count)
+
         points = []
         while len(points) < count:
             random_point = QgsPoint(
                 minx + (random() * (maxx - minx)), miny + (random() * (maxy - miny)))
-            if not polygon.contains(random_point):
+            if not polygon.contains(random_point) or any(
+                    filter(lambda item: self.qgisdist(item, random_point) < dis, points)):
                 continue
-            points.append(QgsGeometry.fromPoint(random_point))
+            points.append(random_point)
 
         features = []
         for geom in points:
             feature = QgsFeature()
             feature.setAttributes(point.attributes())
-            feature.setGeometry(geom)
+            feature.setGeometry(QgsGeometry.fromPoint(geom))
             features.append(feature)
         return features
 
