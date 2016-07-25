@@ -122,13 +122,16 @@ class PointsRegroupingProcessor(QgsMapTool):
         maxx, maxy, minx, miny = [getattr(rect, key)() for key in ('xMaximum', 'yMaximum', 'xMinimum', 'yMinimum')]
 
         dis = polygon.length() / (3. * count)
+        maxiterations = count * 100
+        iteration = 0
 
         points = []
         while len(points) < count:
+            iteration += 1
             random_point = QgsPoint(
                 minx + (random() * (maxx - minx)), miny + (random() * (maxy - miny)))
-            if not polygon.contains(random_point) or any(
-                    filter(lambda item: self.qgisdist(item, random_point) < dis, points)):
+            if not polygon.contains(random_point) or any(filter(
+                    lambda item: iteration < maxiterations and self.qgisdist(item, random_point) < dis, points)):
                 continue
             points.append(random_point)
 
