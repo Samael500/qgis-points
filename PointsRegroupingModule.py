@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+from functools import partial
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -53,8 +54,8 @@ class PointsRegroupingProcessor(QgsMapTool):
             point['access'] += processed_flag
             for key in 'room', 'L_room', 'all_area', 'NL_area', 'CP_area', 'parcel_are':
                 try:
-                    if key in ('room', ):
-                        _type = int
+                    if key in ('room', 'L_room', ):
+                        _type = partial(round, ndigits=2)
                     else:
                         _type = float
                     point[key] = str(_type(float(point[key]) / count))
